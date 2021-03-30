@@ -1,10 +1,10 @@
-import React, { useContext, useEffect } from "react";
-import { UserContext } from "./Context";
+import React, { useEffect } from "react";
+import { Context } from "./Context";
 import GlobalStyles from "./GlobalStyles";
 import Router from "./Router";
 
 const App = ({ authService, db }) => {
-  const { actions } = useContext(UserContext);
+  const { actions } = Context();
 
   useEffect(
     () =>
