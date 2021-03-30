@@ -1,11 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./components/App";
-import firebase from "./firebase.js";
+//firebase
+import { AuthService, db } from "fbConfig";
+//context
+import { UserContextProvider } from "components/Context";
+
+const authService = new AuthService();
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <UserContextProvider>
+    <App authService={authService} db={db} />
+  </UserContextProvider>,
   document.getElementById("root")
 );
