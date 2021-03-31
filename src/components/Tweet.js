@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { storage } from "fbConfig";
 
 const Tweet = ({ tweet, isAuthor, db }) => {
   const [editing, setEditing] = useState(false);
@@ -6,7 +7,10 @@ const Tweet = ({ tweet, isAuthor, db }) => {
 
   const handleDelete = async () => {
     const ok = window.confirm("삭제하시겠습니까");
-    ok && (await db.collection("tweets").doc(tweet.id).delete());
+    if (ok) {
+      await db.collection("tweets").doc(tweet.id).delete();
+      await storage.refFromURL(tweet.imageUrl).delete();
+    }
   };
 
   const toggleEditing = () => setEditing((prev) => !prev);
@@ -38,6 +42,7 @@ const Tweet = ({ tweet, isAuthor, db }) => {
               required
               onChange={handleChange}
             />
+
             <input type="submit" value="Update Tweet" />
           </form>
           <button onClick={toggleEditing}>Cancel</button>
@@ -45,6 +50,7 @@ const Tweet = ({ tweet, isAuthor, db }) => {
       ) : (
         <>
           <h4>{tweet.text}</h4>
+          <img src={tweet.imageUrl} width="50px" height="50px" />
           {isAuthor && (
             <>
               <button onClick={handleDelete}>Delete</button>
