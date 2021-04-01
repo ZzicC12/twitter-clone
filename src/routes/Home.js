@@ -1,92 +1,45 @@
-import React, { useEffect, useRef, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { Context } from "components/Context";
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 import Tweet from "components/Tweet";
-import { storage } from "fbConfig";
+import TweetForm from "components/TweetForm";
 
-const Home = ({ db }) => {
-  const [text, setText] = useState("");
+const Section = styled.section`
+  width: 90%;
+  margin: auto;
+  height: 70%;
+  overflow-y: auto;
+`;
+
+const Home = ({ authService, db }) => {
   const [tweets, setTweets] = useState([]);
-  const [url, setUrl] = useState("");
-  const ref = useRef();
-
-  const {
-    state: { user },
-  } = Context();
-
-  const handleChange = (event) => setText(event.target.value);
-
-  const handleSubmit = async (event) => {
-    let downloadUrl = "";
-    event.preventDefault();
-    const fileRef = storage.ref().child(`${user.info.uid}/${uuidv4()}`);
-    if (url) {
-      const file = await fileRef.putString(url, "data_url");
-      downloadUrl = await file.ref.getDownloadURL();
-    }
-    const tweetObj = {
-      text,
-      created: Date.now(),
-      author: user.info.uid,
-      imageUrl: downloadUrl,
-    };
-
-    await db
-      .collection("tweets")
-      .add(tweetObj)
-      .then(setText(""))
-      .then(handleClear());
-  };
-
-  const handleUpload = ({ target: { files } }) => {
-    const reader = new FileReader();
-    reader.onloadend = ({ currentTarget: { result } }) => setUrl(result);
-    files[0] && reader.readAsDataURL(files[0]);
-  };
-
-  const handleClear = () => {
-    setUrl(null);
-    ref.current.value = "";
-  };
+  const user = authService.getCurrentUser();
 
   useEffect(() => {
-    db.collection("tweets").onSnapshot((snapshot) => {
-      const allTweets = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setTweets(allTweets);
-    });
-  }, []);
+    db.collection("tweets")
+      .orderBy("created", "desc")
+      .onSnapshot((snapshot) => {
+        const allTweets = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setTweets(allTweets);
+      });
+  }, [db]);
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={text}
-          onChange={handleChange}
-          placeholder="Write a message..."
-        />
-        <input type="submit" value="tweet" />
-        <input type="file" accept="image/*" onChange={handleUpload} ref={ref} />
-      </form>
-      {url && (
-        <div>
-          <img src={url} width="50px" height="50px" />
-          <button onClick={handleClear}>Clear</button>
-        </div>
-      )}
-      <section>
+      <TweetForm db={db} authService={authService} />
+      <Section>
         {tweets.map((item, index) => (
           <Tweet
             tweet={item}
             key={index}
-            isAuthor={item.author === user.info.uid}
+            isAuthor={item.author === user.uid}
             db={db}
+            authService={authService}
           />
         ))}
-      </section>
+      </Section>
     </>
   );
 };

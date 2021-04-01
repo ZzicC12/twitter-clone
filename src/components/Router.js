@@ -1,32 +1,24 @@
 import React from "react";
 import { HashRouter, Route, Switch } from "react-router-dom";
+//components
 import Nav from "./Nav";
 import Home from "routes/Home";
 import Auth from "routes/Auth";
 import Profile from "routes/Profile";
-import EditProfile from "routes/EditProfile";
-import { Context } from "./Context";
 
-const Router = ({ authService, db }) => {
-  const {
-    state: { user },
-  } = Context();
-
+const Router = ({ authService, db, isLoggedIn }) => {
   return (
     <>
       <HashRouter>
-        {user.status && <Nav authService={authService} />}
+        {isLoggedIn && <Nav authService={authService} />}
         <Switch>
-          {user.status ? (
+          {isLoggedIn ? (
             <>
               <Route exact path="/">
-                <Home db={db} />
+                <Home authService={authService} db={db} />
               </Route>
               <Route path="/profile">
-                <Profile />
-              </Route>
-              <Route path="/edit">
-                <EditProfile />
+                <Profile authService={authService} />
               </Route>
             </>
           ) : (

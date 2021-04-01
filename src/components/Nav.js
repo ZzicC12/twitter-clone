@@ -1,32 +1,53 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
+import {
+  faHome,
+  faSignOutAlt,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Ul = styled.ul`
   display: flex;
-  margin-bottom: 1rem;
+  justify-content: space-between;
+  color: #34495e;
 `;
 
 const Li = styled.li`
-  border: 1px solid black;
   padding: 8px;
   cursor: pointer;
+  transition: 300ms all ease-in-out;
+  &:hover {
+    color: #3498db;
+  }
+`;
+const Column = styled.div`
+  display: flex;
 `;
 
 const Nav = ({ authService }) => {
-  const handleClick = () => authService.logout();
+  const history = useHistory();
+  const handleClick = async () =>
+    await authService.logout().then(() => history.push("/"));
 
   return (
     <nav>
       <Ul>
-        <Li>
-          <Link to="/">Home</Link>
-        </Li>
-        <Li>
-          <Link to="/profile">My Profile</Link>
-        </Li>
-        <Li>
-          <span onClick={handleClick}>Log out</span>
+        <Column>
+          <Li>
+            <Link to="/">
+              <FontAwesomeIcon icon={faHome} size="2x" />
+            </Link>
+          </Li>
+          <Li>
+            <Link to="/profile">
+              <FontAwesomeIcon icon={faUser} size="2x" />
+            </Link>
+          </Li>
+        </Column>
+        <Li onClick={handleClick}>
+          <FontAwesomeIcon icon={faSignOutAlt} size="2x" />
         </Li>
       </Ul>
     </nav>

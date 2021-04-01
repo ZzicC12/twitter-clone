@@ -15,29 +15,35 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-export class AuthService {
-  onStateChange(callback) {
-    firebase.auth().onAuthStateChanged((user) => callback(user));
-  }
+export const db = firebase.firestore();
+export const storage = firebase.storage();
 
-  async signupEmail(email, password) {
-    await firebase
+export class AuthService {
+  onStateChange = (callback) =>
+    firebase.auth().onAuthStateChanged((user) => callback(user));
+
+  defaultImgUrl = () =>
+    firebase.storage().ref().child("profile/default.jpg").getDownloadURL();
+
+  signupEmail = async (email, password) => {
+    const URL = await this.defaultImgUrl();
+    firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        user.updateProfile({ displayName: user.email, photoURL: URL });
+      })
       .catch((error) => alert(error.message));
-  }
+  };
 
-  async loginEmail(email, password) {
-    await firebase
+  loginEmail = (email, password) =>
+    firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
       .catch((error) => alert(error.message));
-  }
 
-  async logout() {
-    await firebase.auth().signOut();
-  }
+  logout = () => firebase.auth().signOut();
+
+  getCurrentUser = () => firebase.auth().currentUser;
 }
-
-export const db = firebase.firestore();
-export const storage = firebase.storage();

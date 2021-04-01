@@ -1,25 +1,22 @@
-import React, { useEffect } from "react";
-import { Context } from "./Context";
+import React, { useEffect, useState } from "react";
 import GlobalStyles from "./GlobalStyles";
 import Router from "./Router";
 
 const App = ({ authService, db }) => {
-  const { actions } = Context();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(
     () =>
       authService.onStateChange((user) => {
-        user
-          ? actions.setUser({ info: user, status: true })
-          : actions.setUser({ info: null, status: false });
+        user ? setIsLoggedIn(true) : setIsLoggedIn(false);
       }),
-    []
+    [authService]
   );
 
   return (
     <>
       <GlobalStyles />
-      <Router authService={authService} db={db} />
+      <Router authService={authService} db={db} isLoggedIn={isLoggedIn} />
     </>
   );
 };

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 const Section = styled.section`
   height: 100%;
@@ -68,6 +68,7 @@ const SignupBtn = styled.button`
 const Auth = ({ title, authService }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const history = useHistory();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -76,7 +77,7 @@ const Auth = ({ title, authService }) => {
         authService.loginEmail(email, password);
         break;
       case "Sign Up":
-        authService.signupEmail(email, password);
+        authService.signupEmail(email, password).then(() => history.push("/"));
         break;
       default:
         return;
