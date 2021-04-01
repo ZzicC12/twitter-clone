@@ -78,6 +78,8 @@ const Profile = ({ authService }) => {
   const user = authService.getCurrentUser();
   const [text, setText] = useState("");
   const [toggleInput, setToggleInput] = useState(false);
+  const [name, setName] = useState(user.displayName);
+  const [photo, setPhoto] = useState(user.photoURL);
 
   let downloadUrl;
 
@@ -92,6 +94,7 @@ const Profile = ({ authService }) => {
     const file = await fileRef.put(files[0]);
     downloadUrl = await file.ref.getDownloadURL();
     user.updateProfile({ photoURL: downloadUrl });
+    setPhoto(downloadUrl);
   };
 
   const handleToggle = () => setToggleInput((prev) => !prev);
@@ -101,13 +104,14 @@ const Profile = ({ authService }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     user.updateProfile({ displayName: text });
+    setName(text);
     handleToggle();
     setText("");
   };
 
   return (
     <>
-      <Img src={user.photoURL} />
+      <Img src={photo} />
       {toggleInput ? (
         <Form onSubmit={handleSubmit}>
           <InputText
@@ -121,7 +125,7 @@ const Profile = ({ authService }) => {
           </Button>
         </Form>
       ) : (
-        <Title>{user.displayName}</Title>
+        <Title>{name}</Title>
       )}
       <Div>
         <Label htmlFor="name" onClick={handleToggle}>
