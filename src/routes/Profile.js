@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { storage } from "fbConfig";
 import { v4 as uuidv4 } from "uuid";
@@ -78,13 +78,15 @@ const Profile = ({ authService }) => {
   const user = authService.getCurrentUser();
   const [text, setText] = useState("");
   const [toggleInput, setToggleInput] = useState(false);
-  const ref = useRef();
+
   let downloadUrl;
 
   const handleUpload = async ({ target: { files } }) => {
     if (user.photoURL) {
       const previousRef = storage.refFromURL(user.photoURL);
-      previousRef.delete();
+      if (previousRef.name !== "default.jpg") {
+        previousRef.delete();
+      }
     }
     const fileRef = storage.ref().child(`profile/${user.uid}/${uuidv4()}`);
     const file = await fileRef.put(files[0]);
@@ -128,13 +130,7 @@ const Profile = ({ authService }) => {
         <Label htmlFor="file">
           <FontAwesomeIcon icon={faCamera} size="3x" />
         </Label>
-        <Input
-          id="file"
-          type="file"
-          accept="image/*"
-          onChange={handleUpload}
-          ref={ref}
-        />
+        <Input id="file" type="file" accept="image/*" onChange={handleUpload} />
       </Div>
     </>
   );
