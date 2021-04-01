@@ -102,7 +102,7 @@ const Profile = ({ authService }) => {
     event.preventDefault();
     user.updateProfile({ displayName: text });
     handleToggle();
-    setText(null);
+    setText("");
   };
 
   return (
