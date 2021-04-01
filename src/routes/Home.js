@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { db } from "fbConfig";
 import Tweet from "components/Tweet";
 import TweetForm from "components/TweetForm";
 
@@ -10,7 +11,7 @@ const Section = styled.section`
   overflow-y: auto;
 `;
 
-const Home = ({ authService, db }) => {
+const Home = ({ authService }) => {
   const [tweets, setTweets] = useState([]);
   const user = authService.getCurrentUser();
 
@@ -24,7 +25,7 @@ const Home = ({ authService, db }) => {
         }));
         setTweets(allTweets);
       });
-  }, [db]);
+  }, []);
 
   return (
     <>
