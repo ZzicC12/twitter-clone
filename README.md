@@ -1,13 +1,15 @@
 # Twitter Clone
 
-## Description
+## 개요
 
-- react, firebase를 사용해서 트위터를 클론코딩
+- firebase, react를 사용한 실시간 SNS
+- 글과 사진 업로드, 수정, 삭제 구현
+- 사용자의 닉네임, 프로필 사진 수정 가능
 
-## Stack
-
-- <img src="https://img.shields.io/badge/react-white?logo=react"/>
-- <img src="https://img.shields.io/badge/firebase-white?logo=firebase"/>
+## 사용한 기술
+- Front-end : `react` `react-router-dom` `styled-components`
+- Back-end : `firebase`
+- Deploy : `gh-pages`
 
 ## ScreenShots
 
